@@ -63,7 +63,7 @@ Variables de entorno disponibles:
 3. Configurar las variables de entorno necesarias
 4. Desplegar
 
-La aplicación quedará accesible en el puerto **8000**.
+La aplicación quedará accesible en el puerto **8888**.
 
 ## Estructura
 

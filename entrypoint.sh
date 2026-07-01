@@ -7,7 +7,7 @@ python manage.py migrate --noinput
 python manage.py collectstatic --noinput --clear
 
 exec gunicorn Ecosistema_Personal.wsgi:application \
-    --bind 0.0.0.0:8000 \
+    --bind 0.0.0.0:8888 \
     --workers 2 \
     --threads 2 \
     --access-logfile - \

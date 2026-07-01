@@ -6,7 +6,7 @@ services:
     container_name: bodylog
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8888:8888"
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-cambiar-esta-clave-en-produccion}
       - DJANGO_DEBUG=${DJANGO_DEBUG:-False}
