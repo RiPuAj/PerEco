@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY --chown=app:app . .
 
-RUN mkdir -p /app/data && \
+RUN mkdir -p /app/data /app/staticfiles && \
     chown -R app:app /app && \
     chmod +x entrypoint.sh && \
     python -m compileall -q . && \
