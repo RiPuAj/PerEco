@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: { 50: '#f0f9f4', 100: '#dcf1e3', 500: '#1f8a5f', 600: '#197349', 700: '#145c3a' } } } } };
+  </script>
+</head>
+<body class="h-full bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-200 font-sans antialiased">
+  <div class="min-h-full flex items-center justify-center px-4">
+    <div class="w-full max-w-sm">
+      <div class="text-center mb-8">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-white text-lg font-bold">A</span>
+        <h1 class="mt-4 text-xl font-semibold text-stone-900 dark:text-stone-100">Iniciar sesión</h1>
+      </div>
+
+      <form method="post" class="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-6">
+        {% csrf_token %}
+        <div>
+          <label for="id_username" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Usuario</label>
+          <input type="text" name="username" id="id_username" required
+                 class="block w-full rounded-lg border-stone-300 dark:border-stone-600 dark:bg-stone-700 dark:text-stone-200 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
+        </div>
+        <div>
+          <label for="id_password" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Contraseña</label>
+          <input type="password" name="password" id="id_password" required
+                 class="block w-full rounded-lg border-stone-300 dark:border-stone-600 dark:bg-stone-700 dark:text-stone-200 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
+        </div>
+
+        {% if form.errors %}
+          <p class="text-sm text-red-600 dark:text-red-400">Usuario o contraseña incorrectos.</p>
+        {% endif %}
+
+        <button type="submit" class="w-full rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+          Entrar
+        </button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

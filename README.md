@@ -1,6 +1,6 @@
 # Ecosistema Personal
 
-Aplicación Django modular para la gestión de finanzas personales y control de salud.
+Aplicación Django modular para la gestión de finanzas personales y control de salud. Preparada para ejecutarse en **Raspberry Pi** con Docker.
 
 ## Servicios
 
@@ -22,57 +22,67 @@ Aplicación Django modular para la gestión de finanzas personales y control de 
 
 ## Requisitos
 
-- Python 3.13+
-- Django 6.0+
+- Python 3.13+ (desarrollo) o Docker (producción)
+- Django 5.0+
 
 ## Puesta en marcha
 
+### Desarrollo (local)
+
 ```bash
-# 1. Clonar el repositorio
-git clone <repo-url> bodylog
-cd bodylog
-
-# 2. Crear y activar entorno virtual
 python -m venv venv
-# Windows:
-venv\Scripts\activate
-# Linux/Mac:
-source venv/bin/activate
-
-# 3. Instalar dependencias
-pip install django
-
-# 4. Ejecutar migraciones
+# Windows: venv\Scripts\activate
+# Linux:   source venv/bin/activate
+pip install -r requirements.txt
 python manage.py migrate
-
-# 5. Crear superusuario (opcional, para acceder al admin)
 python manage.py createsuperuser
-
-# 6. Iniciar servidor de desarrollo
 python manage.py runserver
 ```
 
-Acceder a [http://localhost:8000](http://localhost:8000) e iniciar sesión.
+### Producción (Docker)
 
-## Estructura del proyecto
+Construir la imagen para ARM (Raspberry Pi) o x86_64:
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+Variables de entorno disponibles:
+
+| Variable | Valor por defecto | Descripción |
+|---|---|---|
+| `DJANGO_SECRET_KEY` | *(auto-generada)* | Clave secreta de Django |
+| `DJANGO_DEBUG` | `False` | Modo depuración |
+| `DJANGO_ALLOWED_HOSTS` | `*` | Hosts permitidos (separados por coma) |
+
+### Portainer
+
+1. Añadir el stack desde el repositorio Git
+2. Usar `docker-compose.yml` como plantilla
+3. Configurar las variables de entorno necesarias
+4. Desplegar
+
+La aplicación quedará accesible en el puerto **8000**.
+
+## Estructura
 
 ```
 BodyLog/
-├── core/                  # App núcleo (landing page con servicios)
-├── salud/                 # App de salud (peso, comidas, perfil TMB)
-├── finanzas/              # App de finanzas (ingresos, gastos, inversiones)
-├── Ecosistema_Personal/   # Configuración del proyecto Django
+├── core/                  # App núcleo (landing page)
+├── salud/                 # App de salud
+├── finanzas/              # App de finanzas
+├── Ecosistema_Personal/   # Configuración Django
 ├── templates/             # Plantillas HTML
-│   ├── base/              # Base, navbar, paginación
-│   ├── salud/             # Templates de salud
-│   ├── finanzas/          # Templates de finanzas
-│   └── components/        # Componentes reutilizables
-├── static/                # Archivos estáticos (CSS, JS)
-└── manage.py              # Script de gestión de Django
+├── static/                # Archivos estáticos
+├── Dockerfile             # Imagen multi-stage (~130 MB)
+├── docker-compose.yml     # Orquestación para Portainer
+└── entrypoint.sh          # Script de arranque
 ```
 
 ## Tecnologías
 
-- **Backend**: Django 6.0
+- **Backend**: Django 5.1, Gunicorn, Whitenoise
 - **Frontend**: Tailwind CSS (CDN), Chart.js
-- **Base de datos**: SQLite (por defecto)
+- **Base de datos**: SQLite (volumen persistente)
+- **Contenedor**: python:3.13-slim (multi-arch: amd64, arm64, arm/v7)
