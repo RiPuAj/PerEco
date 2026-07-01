@@ -2,8 +2,7 @@
 FROM python:3.13-slim AS builder
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --user --no-warn-script-location \
-    -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: runtime
 FROM python:3.13-slim
@@ -13,8 +12,7 @@ RUN addgroup --system --gid 1000 app && \
 
 WORKDIR /app
 
-COPY --from=builder /root/.local /root/.local
-ENV PATH=/root/.local/bin:$PATH
+COPY --from=builder /usr/local /usr/local
 
 COPY --chown=app:app . .
 
@@ -24,6 +22,6 @@ RUN chmod +x entrypoint.sh && \
 
 USER app
 
-EXPOSE 8000
+EXPOSE 8888
 
 ENTRYPOINT ["/app/entrypoint.sh"]
