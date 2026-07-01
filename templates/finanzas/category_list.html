@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+{% block title %}Categorías Financieras{% endblock %}
+
+{% block content %}
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Categorías</h1>
+      <p class="mt-1 text-stone-500 dark:text-stone-400">Gestiona las categorías de ingresos y gastos.</p>
+    </div>
+    <a href="{% url 'finanzas:category_create' %}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">+ Nueva categoría</a>
+  </div>
+
+  <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-stone-50 dark:bg-stone-800/50 text-stone-600 dark:text-stone-400">
+        <tr>
+          <th class="text-left px-4 py-3 font-medium">Nombre</th>
+          <th class="text-left px-4 py-3 font-medium">Tipo</th>
+          <th class="text-left px-4 py-3 font-medium">Color</th>
+          <th class="text-center px-4 py-3 font-medium">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-stone-100 dark:divide-stone-700">
+        {% for cat in categories %}
+          <tr class="hover:bg-stone-50 dark:hover:bg-stone-700">
+            <td class="px-4 py-3 font-medium text-stone-800 dark:text-stone-200">{{ cat.name }}</td>
+            <td class="px-4 py-3">
+              <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium
+                {% if cat.type == 'income' %}bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400{% else %}bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400{% endif %}">
+                {{ cat.get_type_display }}
+              </span>
+            </td>
+            <td class="px-4 py-3">
+              <span class="inline-block w-6 h-6 rounded-full border" style="background: {{ cat.color }}"></span>
+            </td>
+            <td class="px-4 py-3 text-center">
+              <a href="{% url 'finanzas:category_delete' cat.pk %}" class="text-red-600 dark:text-red-400 hover:underline text-xs">Eliminar</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-center py-10 text-stone-400 dark:text-stone-500">No hay categorías creadas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

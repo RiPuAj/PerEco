@@ -1,0 +1,15 @@
+{% if page_obj.has_other_pages %}
+<div class="mt-4 flex items-center justify-between text-sm text-stone-500 dark:text-stone-400">
+  <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+  <div class="flex gap-2">
+    {% if page_obj.has_previous %}
+      <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}"
+         class="rounded-lg border border-stone-300 dark:border-stone-600 px-3 py-1.5 hover:bg-stone-50 dark:hover:bg-stone-700">Anterior</a>
+    {% endif %}
+    {% if page_obj.has_next %}
+      <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}"
+         class="rounded-lg border border-stone-300 dark:border-stone-600 px-3 py-1.5 hover:bg-stone-50 dark:hover:bg-stone-700">Siguiente</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}

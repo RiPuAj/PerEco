@@ -1,0 +1,24 @@
+{% extends 'base/base.html' %}
+{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} gasto futuro{% endblock %}
+
+{% block content %}
+  <div class="max-w-md">
+    <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-1">{% if object %}Editar gasto futuro{% else %}Nuevo gasto futuro{% endif %}</h1>
+    <p class="text-stone-500 dark:text-stone-400 mb-6">Planifica un gasto que harás más adelante.</p>
+
+    <form method="post" class="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-6">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ field.errors.0 }}</p>{% endif %}
+        </div>
+      {% endfor %}
+      <div class="flex items-center gap-3 pt-2">
+        <button type="submit" class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700">Guardar</button>
+        <a href="{% url 'finanzas:future_list' %}" class="text-sm text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200">Cancelar</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

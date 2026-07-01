@@ -1,0 +1,37 @@
+{% comment %}
+Uso: {% include 'components/service_card.html' with service=service %}
+Espera un dict/objeto con: name, description, url_name, color, active, icon
+{% endcomment %}
+<a href="{% if service.active %}{% url service.url_name %}{% else %}#{% endif %}"
+   class="group relative flex flex-col gap-4 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5
+          transition hover:-translate-y-0.5 hover:shadow-md
+          {% if not service.active %}pointer-events-none opacity-50{% endif %}">
+
+  <div class="flex items-start justify-between">
+    <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl"
+          style="background-color: {{ service.color }}1A; color: {{ service.color }};">
+      {% include 'components/icon.html' with icon=service.icon class="h-6 w-6" %}
+    </span>
+
+    {% if not service.active %}
+      <span class="rounded-full bg-stone-100 dark:bg-stone-700 px-2.5 py-0.5 text-xs font-medium text-stone-500 dark:text-stone-400">
+        Próximamente
+      </span>
+    {% endif %}
+  </div>
+
+  <div>
+    <h3 class="font-semibold text-stone-900 dark:text-stone-100">{{ service.name }}</h3>
+    <p class="mt-1 text-sm text-stone-500 dark:text-stone-400 leading-relaxed">{{ service.description }}</p>
+  </div>
+
+  {% if service.active %}
+    <span class="mt-auto inline-flex items-center gap-1 text-sm font-medium" style="color: {{ service.color }};">
+      Abrir
+      <svg class="h-4 w-4 transition group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+      </svg>
+    </span>
+  {% endif %}
+</a>

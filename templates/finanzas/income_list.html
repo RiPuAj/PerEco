@@ -1,0 +1,43 @@
+{% extends 'base/base.html' %}
+{% block title %}Ingresos{% endblock %}
+
+{% block content %}
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Ingresos</h1>
+      <p class="mt-1 text-stone-500 dark:text-stone-400">Todos tus ingresos registrados.</p>
+    </div>
+    <a href="{% url 'finanzas:income_create' %}" class="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">+ Nuevo ingreso</a>
+  </div>
+
+  <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-stone-50 dark:bg-stone-800/50 text-stone-600 dark:text-stone-400">
+        <tr>
+          <th class="text-left px-4 py-3 font-medium">Fecha</th>
+          <th class="text-left px-4 py-3 font-medium">Categoría</th>
+          <th class="text-left px-4 py-3 font-medium">Descripción</th>
+          <th class="text-right px-4 py-3 font-medium">Importe</th>
+          <th class="text-center px-4 py-3 font-medium">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-stone-100 dark:divide-stone-700">
+        {% for income in incomes %}
+          <tr class="hover:bg-stone-50 dark:hover:bg-stone-700">
+            <td class="px-4 py-3 text-stone-700 dark:text-stone-300">{{ income.date|date:"d/m/Y" }}</td>
+            <td class="px-4 py-3 text-stone-500 dark:text-stone-400">{{ income.category.name|default:"-" }}</td>
+            <td class="px-4 py-3 text-stone-500 dark:text-stone-400">{{ income.description|truncatechars:50 }}</td>
+            <td class="px-4 py-3 text-right font-medium text-green-600 dark:text-green-400">{{ income.amount|floatformat:2 }} €</td>
+            <td class="px-4 py-3 text-center">
+              <a href="{% url 'finanzas:income_update' income.pk %}" class="text-blue-600 dark:text-blue-400 hover:underline text-xs">Editar</a>
+              <a href="{% url 'finanzas:income_delete' income.pk %}" class="text-red-600 dark:text-red-400 hover:underline text-xs ml-2">Eliminar</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-center py-10 text-stone-400 dark:text-stone-500">No hay ingresos registrados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include 'base/pagination.html' with page_obj=incomes %}
+{% endblock %}

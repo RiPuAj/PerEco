@@ -1,0 +1,126 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Finanzas · Dashboard{% endblock %}
+
+{% block content %}
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Dashboard Financiero</h1>
+      <p class="mt-1 text-stone-500 dark:text-stone-400">Resumen de ingresos, gastos e inversiones.</p>
+    </div>
+    <div class="flex gap-2">
+      <a href="{% url 'finanzas:income_create' %}"
+         class="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">
+        + Ingreso
+      </a>
+      <a href="{% url 'finanzas:expense_create' %}"
+         class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
+        + Gasto
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Ingresos del mes</p>
+      <p class="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">{{ total_income_month|floatformat:2 }} €</p>
+    </div>
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Gastos del mes</p>
+      <p class="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{{ total_expense_month|floatformat:2 }} €</p>
+    </div>
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Balance mensual</p>
+      <p class="text-2xl font-bold {{ balance_class }} mt-1">{{ balance_month|floatformat:2 }} €</p>
+    </div>
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Gasto máximo recomendado</p>
+      <p class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">{{ max_spendable|floatformat:2 }} €</p>
+      <p class="text-xs text-stone-400 dark:text-stone-500 mt-1">Ingresos - 20% ahorro</p>
+    </div>
+  </div>
+
+  <!-- Second row: investments + future expenses -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Total invertido</p>
+      <p class="text-xl font-bold text-stone-900 dark:text-stone-100 mt-1">{{ total_invested|floatformat:2 }} €</p>
+    </div>
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Valor actual inversiones</p>
+      <p class="text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">{{ total_current|floatformat:2 }} €</p>
+    </div>
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Gastos futuros totales</p>
+      <p class="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">{{ total_future|floatformat:2 }} €</p>
+    </div>
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Objetivo ahorro mensual</p>
+      <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{{ savings_target|floatformat:2 }} €</p>
+    </div>
+  </div>
+
+  <!-- Charts and recent activity -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- Category chart -->
+    <section class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <h2 class="font-semibold text-stone-900 dark:text-stone-100 mb-4">Gastos por categoría (último año)</h2>
+      {% if has_expense_cat_data %}
+        <canvas id="expenseCategoryChart" height="250"></canvas>
+      {% else %}
+        <p class="text-sm text-stone-400 dark:text-stone-500 py-10 text-center">No hay gastos registrados en el último año.</p>
+      {% endif %}
+    </section>
+
+    <!-- Recent expenses -->
+    <section class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <h2 class="font-semibold text-stone-900 dark:text-stone-100 mb-4">Últimos gastos</h2>
+      <div class="divide-y divide-stone-100 dark:divide-stone-700">
+        {% for expense in recent_expenses %}
+          <div class="flex items-center justify-between py-3">
+            <div>
+              <p class="text-sm font-medium text-stone-800 dark:text-stone-200">{{ expense.date|date:"d/m/Y" }}</p>
+              <p class="text-sm text-stone-500 dark:text-stone-400">{{ expense.description|truncatechars:40|default:"-" }}</p>
+            </div>
+            <span class="text-sm font-medium text-red-600 dark:text-red-400">{{ expense.amount|floatformat:2 }} €</span>
+          </div>
+        {% empty %}
+          <p class="text-sm text-stone-400 dark:text-stone-500 py-6 text-center">Aún no hay gastos.</p>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+
+  <!-- Recent incomes -->
+  <section class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+    <h2 class="font-semibold text-stone-900 dark:text-stone-100 mb-4">Últimos ingresos</h2>
+    <div class="divide-y divide-stone-100 dark:divide-stone-700">
+      {% for income in recent_incomes %}
+        <div class="flex items-center justify-between py-3">
+          <div>
+            <p class="text-sm font-medium text-stone-800 dark:text-stone-200">{{ income.date|date:"d/m/Y" }}</p>
+            <p class="text-sm text-stone-500 dark:text-stone-400">{{ income.description|truncatechars:40|default:"-" }}</p>
+          </div>
+          <span class="text-sm font-medium text-green-600 dark:text-green-400">{{ income.amount|floatformat:2 }} €</span>
+        </div>
+      {% empty %}
+        <p class="text-sm text-stone-400 dark:text-stone-500 py-6 text-center">Aún no hay ingresos.</p>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+  window.FINANZAS_CHART_DATA = {
+    expense_cat: {
+      labels: {{ expense_cat_labels|default:"[]"|safe }},
+      values: {{ expense_cat_values|default:"[]"|safe }},
+      colors: {{ expense_cat_colors|default:"[]"|safe }},
+    },
+  };
+</script>
+<script src="{% static 'finanzas/js/charts.js' %}"></script>
+{% endblock %}

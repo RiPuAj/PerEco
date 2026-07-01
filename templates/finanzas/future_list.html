@@ -1,0 +1,49 @@
+{% extends 'base/base.html' %}
+{% block title %}Gastos Futuros{% endblock %}
+
+{% block content %}
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Gastos Futuros</h1>
+      <p class="mt-1 text-stone-500 dark:text-stone-400">Planifica gastos que harás en el futuro.</p>
+    </div>
+    <a href="{% url 'finanzas:future_create' %}" class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700">+ Nuevo gasto futuro</a>
+  </div>
+
+  <div class="mb-6 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30 p-4">
+    <p class="text-sm text-amber-800 dark:text-amber-400">
+      <strong>Total estimado:</strong> {{ total_future|floatformat:2 }} €
+    </p>
+  </div>
+
+  <div class="grid gap-4">
+    {% for exp in future_expenses %}
+      <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-4 flex items-center justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <h3 class="font-medium text-stone-900 dark:text-stone-100">{{ exp.name }}</h3>
+            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium
+              {% if exp.priority == 'high' %}bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400
+              {% elif exp.priority == 'medium' %}bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400
+              {% else %}bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-400{% endif %}">
+              {{ exp.get_priority_display }}
+            </span>
+          </div>
+          <p class="text-sm text-stone-500 dark:text-stone-400 mt-1">
+            {{ exp.estimated_amount|floatformat:2 }} €
+            {% if exp.due_date %} · {{ exp.due_date|date:"d/m/Y" }}{% endif %}
+            {% if exp.category %} · {{ exp.category.name }}{% endif %}
+          </p>
+          {% if exp.notes %}<p class="text-xs text-stone-400 dark:text-stone-500 mt-1">{{ exp.notes|truncatechars:80 }}</p>{% endif %}
+        </div>
+        <div class="flex gap-2 ml-4">
+          <a href="{% url 'finanzas:future_update' exp.pk %}" class="text-blue-600 dark:text-blue-400 hover:underline text-sm">Editar</a>
+          <a href="{% url 'finanzas:future_delete' exp.pk %}" class="text-red-600 dark:text-red-400 hover:underline text-sm">Eliminar</a>
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-center py-10 text-stone-400 dark:text-stone-500">No hay gastos futuros planificados.</div>
+    {% endfor %}
+  </div>
+  {% include 'base/pagination.html' with page_obj=future_expenses %}
+{% endblock %}

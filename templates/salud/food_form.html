@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+{% block title %}{% if object %}Editar{% else %}Nueva{% endif %} comida{% endblock %}
+
+{% block content %}
+  <div class="max-w-md">
+    <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-1">
+      {% if object %}Editar comida{% else %}Nueva comida{% endif %}
+    </h1>
+    <p class="text-stone-500 dark:text-stone-400 mb-6">Registra qué comiste y, si lo sabes, las calorías aproximadas.</p>
+
+    <form method="post" class="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-6">
+      {% csrf_token %}
+
+      <div>
+        <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Fecha</label>
+        {{ form.date }}
+        {% if form.date.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.date.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div>
+        <label for="{{ form.moment_day.id_for_label }}" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Momento del día</label>
+        {{ form.moment_day }}
+        {% if form.moment_day.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.moment_day.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div>
+        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Descripción</label>
+        {{ form.description }}
+        {% if form.description.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.description.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div>
+        <label for="{{ form.kcal_value.id_for_label }}" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Calorías (kcal, opcional)</label>
+        {{ form.kcal_value }}
+        {% if form.kcal_value.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.kcal_value.errors.0 }}</p>{% endif %}
+      </div>
+
+      {% if form.non_field_errors %}
+        <p class="text-sm text-red-600 dark:text-red-400">{{ form.non_field_errors.0 }}</p>
+      {% endif %}
+
+      <div class="flex items-center gap-3 pt-2">
+        <button type="submit"
+                class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+          Guardar
+        </button>
+        <a href="{% url 'salud:food_list' %}" class="text-sm text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200">Cancelar</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

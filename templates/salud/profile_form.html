@@ -1,0 +1,49 @@
+{% extends 'base/base.html' %}
+{% block title %}Mi Perfil Salud{% endblock %}
+
+{% block content %}
+  <div class="max-w-md">
+    <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-1">Mi Perfil</h1>
+    <p class="text-stone-500 dark:text-stone-400 mb-6">Datos necesarios para calcular tu TMB y calorías de mantenimiento.</p>
+
+    <form method="post" class="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-6">
+      {% csrf_token %}
+
+      <div>
+        <label for="{{ form.height.id_for_label }}" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Altura (cm)</label>
+        {{ form.height }}
+        {% if form.height.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.height.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div>
+        <label for="{{ form.birth_date.id_for_label }}" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Fecha de nacimiento</label>
+        {{ form.birth_date }}
+        {% if form.birth_date.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.birth_date.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div>
+        <label for="{{ form.sex.id_for_label }}" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Sexo</label>
+        {{ form.sex }}
+        {% if form.sex.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.sex.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div>
+        <label for="{{ form.activity_factor.id_for_label }}" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Nivel de actividad</label>
+        {{ form.activity_factor }}
+        {% if form.activity_factor.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.activity_factor.errors.0 }}</p>{% endif %}
+      </div>
+
+      {% if form.non_field_errors %}
+        <p class="text-sm text-red-600 dark:text-red-400">{{ form.non_field_errors.0 }}</p>
+      {% endif %}
+
+      <div class="flex items-center gap-3 pt-2">
+        <button type="submit"
+                class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+          Guardar perfil
+        </button>
+        <a href="{% url 'salud:dashboard' %}" class="text-sm text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200">Cancelar</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

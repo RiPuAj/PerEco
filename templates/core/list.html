@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% block title %}Servicios{% endblock %}
+
+{% block content %}
+  <div class="mb-8">
+    <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Servicios</h1>
+    <p class="mt-1 text-stone-500 dark:text-stone-400">Selecciona un servicio para empezar.</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for service in services %}
+      {% include 'components/service_card.html' with service=service %}
+    {% empty %}
+      <p class="text-stone-500 dark:text-stone-400 col-span-full">No hay servicios disponibles todavía.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

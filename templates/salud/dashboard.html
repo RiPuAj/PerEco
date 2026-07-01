@@ -1,0 +1,114 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Salud · Resumen{% endblock %}
+
+{% block content %}
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Resumen de salud</h1>
+      <p class="mt-1 text-stone-500 dark:text-stone-400">Peso y alimentación, agrupados por el periodo elegido.</p>
+    </div>
+    <div class="flex gap-2">
+      <a href="{% url 'salud:weight_create' %}"
+         class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+        + Registrar peso
+      </a>
+      <a href="{% url 'salud:food_create' %}"
+          class="rounded-lg border border-stone-300 dark:border-stone-600 px-4 py-2 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700">
+        + Registrar comida
+      </a>
+    </div>
+  </div>
+
+  {% include 'salud/partials/filter_bar.html' %}
+
+  {% if tmb or maintenance %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Tasa Metabólica Basal</p>
+      <p class="text-2xl font-bold text-stone-900 dark:text-stone-100 mt-1">{{ tmb|default:"–" }} kcal</p>
+      <p class="text-xs text-stone-400 dark:text-stone-500 mt-1">Calorías en reposo absoluto</p>
+    </div>
+    <div class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <p class="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">Calorías de Mantenimiento</p>
+      <p class="text-2xl font-bold text-brand-600 dark:text-brand-400 mt-1">{{ maintenance|default:"–" }} kcal</p>
+      <p class="text-xs text-stone-400 dark:text-stone-500 mt-1">Según tu nivel de actividad</p>
+    </div>
+  </div>
+  {% else %}
+  <div class="mb-6 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30 p-4">
+    <p class="text-sm text-amber-800 dark:text-amber-400">
+      Para ver tu TMB y calorías de mantenimiento,
+      <a href="{% url 'salud:profile_edit' %}" class="font-medium underline">configura tu perfil</a>
+      (altura, fecha de nacimiento, sexo y actividad).
+    </p>
+  </div>
+  {% endif %}
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <section class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold text-stone-900 dark:text-stone-100">Evolución del peso</h2>
+        <span class="text-xs text-stone-400 dark:text-stone-500">
+          {% if weight_avg %}Media: {{ weight_avg }} kg{% endif %}
+        </span>
+      </div>
+      {% if has_weight_data %}
+        <canvas id="weightChart" height="220"></canvas>
+      {% else %}
+        <p class="text-sm text-stone-400 dark:text-stone-500 py-10 text-center">No hay registros de peso en este rango.</p>
+      {% endif %}
+    </section>
+
+    <section class="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold text-stone-900 dark:text-stone-100">Calorías consumidas</h2>
+        <span class="text-xs text-stone-400 dark:text-stone-500">
+          {% if kcal_avg %}Media: {{ kcal_avg }} kcal{% endif %}
+        </span>
+      </div>
+      {% if has_food_data %}
+        <canvas id="kcalChart" height="220"></canvas>
+      {% else %}
+        <p class="text-sm text-stone-400 dark:text-stone-500 py-10 text-center">No hay comidas registradas en este rango.</p>
+      {% endif %}
+    </section>
+  </div>
+
+  <section class="mt-6 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-5">
+    <h2 class="font-semibold text-stone-900 dark:text-stone-100 mb-4">Últimas comidas</h2>
+    <div class="divide-y divide-stone-100 dark:divide-stone-700">
+      {% for food in recent_foods %}
+        <div class="flex items-center justify-between py-3">
+          <div>
+            <p class="text-sm font-medium text-stone-800 dark:text-stone-200">{{ food.get_moment_day_display }} · {{ food.date|date:"d/m/Y" }}</p>
+            <p class="text-sm text-stone-500 dark:text-stone-400">{{ food.description|truncatechars:60 }}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-stone-500 dark:text-stone-400">{{ food.kcal_value|default:"–" }} kcal</span>
+            <a href="{% url 'salud:food_update' food.pk %}" class="text-sm text-brand-600 dark:text-brand-400 hover:underline">Editar</a>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-sm text-stone-400 dark:text-stone-500 py-6 text-center">Aún no hay comidas registradas.</p>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+  window.SALUD_CHART_DATA = {
+    weight: {
+      labels: {{ weight_chart_labels|default:"[]"|safe }},
+      values: {{ weight_chart_values|default:"[]"|safe }},
+    },
+    kcal: {
+      labels: {{ food_chart_labels|default:"[]"|safe }},
+      values: {{ food_chart_values|default:"[]"|safe }},
+    },
+  };
+</script>
+<script src="{% static 'salud/js/charts.js' %}"></script>
+{% endblock %}

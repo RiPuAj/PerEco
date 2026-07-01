@@ -1,0 +1,36 @@
+{% comment %}
+Uso: {% include 'salud/partials/filter_bar.html' %}
+Espera en el contexto: filter_form (instancia de SaludFilterForm)
+Hace submit por GET para mantener la URL filtrable/compartible.
+{% endcomment %}
+<form method="get" class="flex flex-wrap items-end gap-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 p-4 mb-6">
+  <div>
+    <label class="block text-xs font-medium text-stone-500 dark:text-stone-400 mb-1">Agrupar por</label>
+    <select name="group_by" class="rounded-lg border-stone-300 dark:border-stone-600 dark:bg-stone-700 dark:text-stone-200 text-sm focus:border-brand-500 focus:ring-brand-500">
+      {% for value, label in filter_form.group_by_choices %}
+        <option value="{{ value }}" {% if filter_form.group_by.value == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label class="block text-xs font-medium text-stone-500 dark:text-stone-400 mb-1">Desde</label>
+    {{ filter_form.date_from }}
+  </div>
+
+  <div>
+    <label class="block text-xs font-medium text-stone-500 dark:text-stone-400 mb-1">Hasta</label>
+    {{ filter_form.date_to }}
+  </div>
+
+  <div class="flex gap-2 ml-auto">
+    <a href="{{ request.path }}"
+       class="rounded-lg border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-700">
+      Limpiar
+    </a>
+    <button type="submit"
+            class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+      Aplicar filtros
+    </button>
+  </div>
+</form>

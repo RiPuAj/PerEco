@@ -1,0 +1,152 @@
+{% load static %}
+<header class="bg-white border-b border-stone-200 dark:bg-stone-800 dark:border-stone-700">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="{% url 'core:home' %}" class="flex items-center gap-2 font-semibold text-stone-900 dark:text-stone-100 shrink-0">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white text-sm">A</span>
+        <span class="hidden xs:inline">Mis Servicios</span>
+      </a>
+
+      {% if request.resolver_match.app_name == 'salud' %}
+      <!-- Desktop nav -->
+      <nav class="hidden sm:flex items-center gap-1 text-sm">
+        <a href="{% url 'salud:dashboard' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if request.resolver_match.url_name == 'dashboard' %}text-brand-700 font-medium bg-brand-50 dark:text-brand-400 dark:bg-brand-900/30{% endif %}">
+          Resumen
+        </a>
+        <a href="{% url 'salud:weight_list' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'weight' in request.resolver_match.url_name %}text-brand-700 font-medium bg-brand-50 dark:text-brand-400 dark:bg-brand-900/30{% endif %}">
+          Peso
+        </a>
+        <a href="{% url 'salud:food_list' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'food' in request.resolver_match.url_name %}text-brand-700 font-medium bg-brand-50 dark:text-brand-400 dark:bg-brand-900/30{% endif %}">
+          Comidas
+        </a>
+        <a href="{% url 'salud:profile_edit' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'profile' in request.resolver_match.url_name %}text-brand-700 font-medium bg-brand-50 dark:text-brand-400 dark:bg-brand-900/30{% endif %}">
+          Perfil
+        </a>
+      </nav>
+      {% elif request.resolver_match.app_name == 'finanzas' %}
+      <!-- Desktop nav -->
+      <nav class="hidden sm:flex items-center gap-1 text-sm">
+        <a href="{% url 'finanzas:dashboard' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if request.resolver_match.url_name == 'dashboard' %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Dashboard
+        </a>
+        <a href="{% url 'finanzas:income_list' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'income' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Ingresos
+        </a>
+        <a href="{% url 'finanzas:expense_list' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'expense' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Gastos
+        </a>
+        <a href="{% url 'finanzas:investment_list' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'investment' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Inversiones
+        </a>
+        <a href="{% url 'finanzas:future_list' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'future' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Gastos Futuros
+        </a>
+        <a href="{% url 'finanzas:category_list' %}"
+           class="px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'category' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Categorías
+        </a>
+      </nav>
+      {% endif %}
+
+      <div class="flex items-center gap-1">
+        <button id="darkModeToggle" class="p-2 rounded-lg text-stone-500 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-700 transition" aria-label="Cambiar modo oscuro">
+          <svg id="sunIcon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <svg id="moonIcon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+
+        {% if request.resolver_match.app_name == 'salud' or request.resolver_match.app_name == 'finanzas' %}
+        <button id="hamburgerBtn" class="sm:hidden p-2 rounded-lg text-stone-500 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-700 transition" aria-label="Menú">
+          <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="hidden sm:hidden border-t border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800">
+    <nav class="px-4 py-3 space-y-1 text-sm">
+      {% if request.resolver_match.app_name == 'salud' %}
+        <a href="{% url 'salud:dashboard' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if request.resolver_match.url_name == 'dashboard' %}text-brand-700 font-medium bg-brand-50 dark:text-brand-400 dark:bg-brand-900/30{% endif %}">
+          Resumen
+        </a>
+        <a href="{% url 'salud:weight_list' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'weight' in request.resolver_match.url_name %}text-brand-700 font-medium bg-brand-50 dark:text-brand-400 dark:bg-brand-900/30{% endif %}">
+          Peso
+        </a>
+        <a href="{% url 'salud:food_list' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'food' in request.resolver_match.url_name %}text-brand-700 font-medium bg-brand-50 dark:text-brand-400 dark:bg-brand-900/30{% endif %}">
+          Comidas
+        </a>
+        <a href="{% url 'salud:profile_edit' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'profile' in request.resolver_match.url_name %}text-brand-700 font-medium bg-brand-50 dark:text-brand-400 dark:bg-brand-900/30{% endif %}">
+          Perfil
+        </a>
+      {% elif request.resolver_match.app_name == 'finanzas' %}
+        <a href="{% url 'finanzas:dashboard' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if request.resolver_match.url_name == 'dashboard' %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Dashboard
+        </a>
+        <a href="{% url 'finanzas:income_list' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'income' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Ingresos
+        </a>
+        <a href="{% url 'finanzas:expense_list' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'expense' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Gastos
+        </a>
+        <a href="{% url 'finanzas:investment_list' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'investment' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Inversiones
+        </a>
+        <a href="{% url 'finanzas:future_list' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'future' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Gastos Futuros
+        </a>
+        <a href="{% url 'finanzas:category_list' %}"
+           class="block px-3 py-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-700 {% if 'category' in request.resolver_match.url_name %}text-blue-700 font-medium bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30{% endif %}">
+          Categorías
+        </a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+<script>
+  document.getElementById('darkModeToggle').addEventListener('click', function() {
+    const html = document.documentElement;
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark);
+  });
+
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  if (hamburgerBtn) {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon = document.getElementById('menuIcon');
+    const closeIcon = document.getElementById('closeIcon');
+    hamburgerBtn.addEventListener('click', function() {
+      mobileMenu.classList.toggle('hidden');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    });
+  }
+</script>
