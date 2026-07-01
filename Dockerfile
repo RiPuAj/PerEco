@@ -18,7 +18,8 @@ ENV PATH=/root/.local/bin:$PATH
 
 COPY --chown=app:app . .
 
-RUN python -m compileall -q . && \
+RUN chmod +x entrypoint.sh && \
+    python -m compileall -q . && \
     rm -rf __pycache__ */__pycache__
 
 USER app
